@@ -1,0 +1,1 @@
+{"Version":"v0.55.0","Time":"2024-09-11T22:28:39Z","Origin":{"VCS":"git","URL":"https://github.com/open-telemetry/opentelemetry-go-contrib","Subdir":"instrumentation/net/http/otelhttp","Hash":"4ccc9c69c6877c878340447de3f4194be5f79e2e","Ref":"refs/tags/instrumentation/net/http/otelhttp/v0.55.0"}}

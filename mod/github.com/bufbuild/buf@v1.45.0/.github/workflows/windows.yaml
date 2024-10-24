@@ -1,0 +1,36 @@
+name: windows
+on: push
+# Prevent writing to the repository using the CI token.
+# Ref: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#permissions
+permissions: read-all
+jobs:
+  test:
+    env:
+      DOWNLOAD_CACHE: 'd:\downloadcache'
+      # Improve performance by using D: drive.
+      # C: seems to be really slow, especially for cache restores.
+      GOPATH: 'd:\go\path'
+      GOCACHE: 'd:\go\cache'
+      GOMODCACHE: 'd:\go\modcache'
+    runs-on: windows-latest
+    steps:
+      - name: support-longpaths
+        run: git config --system core.longpaths true
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: setup-go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.x'
+          cache: true
+      - name: windows-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.DOWNLOAD_CACHE }}
+          key: ${{ runner.os }}-buf-windows-${{ hashFiles('windows/**') }}
+          restore-keys: |
+            ${{ runner.os }}-buf-windows-
+      - name: test
+        shell: bash
+        run: ./windows/test.bash

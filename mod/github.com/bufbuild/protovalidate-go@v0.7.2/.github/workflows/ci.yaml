@@ -1,0 +1,40 @@
+name: CI
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '15 22 * * *'
+  workflow_dispatch: { } # support manual runs
+
+permissions:
+  contents: read
+
+jobs:
+  go:
+    name: Go
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version:
+          - 1.21.x
+          - 1.22.x
+          - 1.23.x
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Install go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Test
+        run: make test
+      - name: Lint
+        # Often, lint guidelines depend on the Go version. To prevent
+        # conflicting guidance, run only on the most recent supported version.
+        if: matrix.go-version == '1.23.x'
+        run: make lint-go
